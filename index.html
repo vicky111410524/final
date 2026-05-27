@@ -3,755 +3,446 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>課程作業彙整平台</title>
+    <title>網頁前端與全端程式設計：全學期成果總覽</title>
     <style>
-        /* ==================== 全域導覽列與基礎樣式 ==================== */
+        /* ====== 全域核心樣式 ====== */
         body {
+            font-family: 'PingFang TC', 'Microsoft JhengHei', sans-serif;
+            background-color: #f4f6f9;
             margin: 0;
-            padding: 0;
-            font-family: "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
-            background-color: #f4f7f6;
+            padding: 15px;
             color: #333;
         }
-        
-        .assignment-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            flex-wrap: wrap;       /* 修正核心：允許按鈕自動換行，不再擠在同一行 */
-            justify-content: center; /* 換行後維持置中，畫面看起來更平衡美觀 */
-            gap: 8px;
-            padding: 12px;
-            z-index: 9999;
-            box-sizing: border-box;
-        }
 
-        .nav-btn {
-            padding: 10px 18px;
-            border: none;
-            background-color: #e0e0e0;
-            color: #555;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-
-        .nav-btn.active {
-            background-color: #4a90e2;
-            color: white;
-        }
-
-        /* ==================== 面板核心顯示控制 ==================== */
-        .tab-panel {
-            display: none; 
-            width: 100%;
-            min-height: 100vh;
-            box-sizing: border-box;
-            padding-top: 140px; /* 修正核心：因導覽列變成兩行高度增加，上方留白同步提高至 140px 避免遮擋內容 */
-        }
-
-        .tab-panel.active {
-            display: block; 
-        }
-        
-        .tab-panel.active.flex-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-bottom: 50px;
-        }
-
-        /* ==================== 期末成果報告專屬樣式 ==================== */
-        .report-container {
-            width: 95%;
-            max-width: 1200px;
+        .container {
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            box-sizing: border-box;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
-        .report-title-block {
+
+        /* ====== 大標題區塊 ====== */
+        .header-section {
             text-align: center;
-            border-bottom: 3px solid #4a90e2;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #3b82f6;
             padding-bottom: 20px;
+        }
+
+        .header-section h1 {
+            color: #1e3a8a;
+            font-size: 26px;
+            margin: 0 0 10px 0;
+        }
+
+        .header-section p {
+            color: #6b7280;
+            font-size: 15px;
+            margin: 5px 0;
+        }
+
+        .intro-text {
+            color: #4b5563;
+            font-size: 14px;
+            line-height: 1.6;
+            text-align: center;
+            max-width: 800px;
+            margin: 15px auto 0 auto;
+        }
+
+        /* ====== 響應式導覽列 (智慧折疊功能) ====== */
+        .custom-navbar {
             margin-bottom: 30px;
         }
-        .report-title-block h1 { margin: 0; color: #2c3e50; font-size: 2.2rem; }
-        .report-title-block p { margin: 10px 0 0 0; color: #7f8c8d; font-size: 1.1rem; }
-        
-        .section-card {
-            background: #f8fafc;
-            border-left: 6px solid #4a90e2;
-            padding: 20px 25px;
-            margin-bottom: 25px;
-            border-radius: 0 12px 12px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-        }
-        .section-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 15px rgba(74, 144, 226, 0.15);
-            background: #f0f7ff;
-        }
-        .section-card h3 { margin-top: 0; color: #2c3e50; font-size: 1.3rem; display: flex; align-items: center; gap: 8px; }
-        .section-card p { line-height: 1.7; color: #4a5568; margin-bottom: 10px; font-size: 0.98rem; }
-        .jump-hint { text-align: right; font-size: 0.85rem; color: #4a90e2; font-weight: bold; margin-top: 10px; }
-        
-        .tech-tag-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
-        .tech-tag { background: #e2e8f0; color: #4a5568; padding: 4px 10px; border-radius: 4px; font-size: 0.85rem; font-weight: bold; font-family: monospace; }
-        
-        .highlight-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .highlight-table th, .highlight-table td { border: 1px solid #cbd5e1; padding: 12px 15px; text-align: left; }
-        .highlight-table th { background-color: #f1f5f9; color: #334155; }
 
-        /* ==================== 小題切換面板與黑盒子樣式 ==================== */
-        .viewer-layout { display: flex; flex-direction: column; gap: 15px; width: 100%; margin-top: 15px; }
-        .sub-btn-grid { display: grid; grid-template-columns: repeat(11, 1fr); gap: 8px; }
-        
-        @media (max-width: 1200px) { .sub-btn-grid { grid-template-columns: repeat(6, 1fr); } }
-        @media (max-width: 768px) { .sub-btn-grid { grid-template-columns: repeat(3, 1fr); } }
-        
-        .sub-btn {
-            padding: 10px 4px;
-            background-color: #f1f3f5;
-            border: 1px solid #ced4da;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.2s;
-            color: #495057;
-            font-weight: bold;
-        }
-        .sub-btn:hover { background-color: #e2e8f0; }
-        .sub-btn.active { background-color: #2ecc71; color: white; border-color: #2ecc71; }
-        .sub-btn.readme-btn { background-color: #e9ecef; border-color: #adb5bd; color: #495057; }
-        .sub-btn.readme-btn.active { background-color: #e67e22; border-color: #e67e22; color: white; }
-        
-        .question-box {
-            background-color: #fff9db;
-            border-left: 5px solid #fcc419;
-            padding: 16px 20px;
-            border-radius: 6px;
-            font-size: 0.98rem;
-            color: #343a40;
-            line-height: 1.6;
-            margin-bottom: 5px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
-            display: none; 
-        }
-        
-        .code-window {
-            background-color: #2d3748;
-            color: #f7fafc;
-            padding: 24px;
-            border-radius: 8px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 1.05rem;
-            margin: 0;
-            box-shadow: inset 0 2px 5px rgba(0,0,0,0.3);
-            min-height: 350px;
-            max-height: 650px;
-            white-space: pre-wrap;
-            word-break: break-all;
-            line-height: 1.6;
-        }
-        
-        .link-group { display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px; }
-        .repo-link-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 10px 16px;
-            background-color: #24292e;
+        /* 手機版：顯示摺疊按鈕 */
+        .menu-toggle-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #3b82f6;
             color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            font-size: 0.9rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
             font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(59,130,246,0.2);
             transition: background 0.2s;
         }
-        .repo-link-btn:hover { background-color: #444; }
-        .play-btn { background-color: #e74c3c; }
-        .play-btn:hover { background-color: #c0392b; }
 
-        /* ==================== 寬版通用卡片容器 ==================== */
-        .hw-card-container {
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-            width: 95%;
-            max-width: 1350px;
-            text-align: left;
-            box-sizing: border-box;
+        .menu-toggle-btn:hover {
+            background-color: #2563eb;
         }
-        .hw-card-container h2 { color: #2c3e50; margin-top: 0; margin-bottom: 0.5rem; text-align: center; font-size: 1.6rem; }
-        .hw-desc { color: #7f8c8d; font-size: 0.95rem; margin-top: 0; margin-bottom: 1.5rem; text-align: center; line-height: 1.4; }
-        .file-info { background-color: #eef6ff; border-left: 5px solid #4a90e2; padding: 12px 18px; border-radius: 5px; margin-bottom: 1rem; font-size: 0.95rem; color: #333; }
-        .file-label { font-weight: bold; color: #4a90e2; }
 
-        /* ==================== 作業一專屬樣式 ==================== */
-        #hw1 .container {
-            background-color: white;
-            padding: 2.5rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            max-width: 500px;
-            width: 90%;
+        /* 手機版預設：把所有按鈕隱藏 */
+        .nav-links-wrapper {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        /* 當點擊按鈕、加上 .active 後，手機版才會滑出選單 */
+        .nav-links-wrapper.active {
+            display: flex;
+        }
+
+        /* 導覽列按鈕樣式 */
+        .nav-btn {
+            display: block;
+            padding: 10px 14px;
+            background-color: #e5e7eb;
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
             text-align: center;
-            box-sizing: border-box;
-            margin: 0 auto;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
         }
-        #hw1 .profile-img {
-            width: 100px;
-            height: 100px;
-            background-color: #4a90e2;
+
+        .nav-btn:hover {
+            background-color: #d1d5db;
+            color: #1f2937;
+        }
+
+        /* 目前所在的活躍按鈕 (藍色) */
+        .nav-btn.active-tab {
+            background-color: #3b82f6;
+            color: white;
+            box-shadow: 0 2px 4px rgba(59,130,246,0.15);
+        }
+
+        /* 當螢幕大於 768px (電腦版) 自動切換為橫向排列 */
+        @media (min-width: 768px) {
+            .menu-toggle-btn {
+                display: none; /* 電腦版藏起折疊按鈕 */
+            }
+            .nav-links-wrapper {
+                display: flex !important; /* 強制橫向排開 */
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+                margin-top: 0;
+            }
+            .nav-btn {
+                display: inline-block;
+                width: auto;
+            }
+        }
+
+        /* ====== 個人簡介卡片 ====== */
+        .profile-card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 25px;
+            max-width: 400px;
+            margin: 0 auto 35px auto;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .avatar {
+            width: 75px;
+            height: 75px;
+            background-color: #3b82f6;
             color: white;
             border-radius: 50%;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 40px;
-            margin: 0 auto 1.5rem;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0 auto 15px auto;
+        }
+
+        .profile-name {
+            font-size: 22px;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0 0 5px 0;
+        }
+
+        .profile-dept {
+            font-size: 14px;
+            color: #6b7280;
+            margin: 0 0 15px 0;
+        }
+
+        .profile-info-list {
+            text-align: left;
+            max-width: 260px;
+            margin: 0 auto;
+            font-size: 14px;
+            line-height: 2;
+            border-top: 1px solid #f3f4f6;
+            padding-top: 15px;
+        }
+
+        .info-row {
+            display: flex;
+        }
+
+        .info-label {
+            width: 65px;
+            color: #3b82f6;
             font-weight: bold;
         }
-        #hw1 h1 { color: #2c3e50; margin-bottom: 0.5rem; }
-        #hw1 .info-grid { text-align: left; margin: 1.5rem 0; border-top: 1px solid #eee; padding-top: 1rem; }
-        #hw1 .info-item { margin: 10px 0; display: flex; }
-        #hw1 .label { font-weight: bold; color: #4a90e2; width: 85px; flex-shrink: 0; }
-        #hw1 .content { color: #555; }
-        #hw1 .goal { background-color: #eef6ff; padding: 15px; border-left: 5px solid #4a90e2; border-radius: 5px; text-align: left; font-size: 0.95rem; line-height: 1.6; }
-        #hw1 footer { margin-top: 2rem; font-size: 0.8rem; color: #aaa; }
 
-        /* ==================== 作業二專屬樣式 ==================== */
-        #hw2 { padding-left: 20px; padding-right: 20px; padding-bottom: 40px; }
-        #hw2 .container { max-width: 1000px; margin: 0 auto; background-color: #fff; padding: 40px; box-shadow: 0 0 10px rgba(0,0,0,0.05); box-sizing: border-box; border-radius: 12px; }
-        #hw2 .ribbon-wrapper { text-align: center; margin-bottom: 10px; position: relative; }
-        #hw2 .ribbon { background-color: #35b5a4; color: white; display: inline-block; padding: 15px 80px; font-size: 24px; font-weight: bold; letter-spacing: 2px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        #hw2 .ribbon::before, #hw2 .ribbon::after { content: ""; position: absolute; top: 10px; z-index: -1; border: 15px solid #288f81; }
-        #hw2 .ribbon::before { left: -20px; border-left-color: transparent; border-bottom-color: transparent; }
-        #hw2 .ribbon::after { right: -20px; border-right-color: transparent; border-bottom-color: transparent; }
-        #hw2 .required-note { text-align: center; color: #d90000; font-size: 14px; margin-bottom: 30px; }
-        #hw2 .form-box { border: 1px solid #fad2d2; padding: 40px 30px 30px; position: relative; margin-top: 20px; border-radius: 6px; }
-        #hw2 .form-tab { position: absolute; top: -16px; left: 15px; background-color: #d7ecf7; color: #555; padding: 6px 15px; border-radius: 6px 6px 0 0; font-size: 14px; font-weight: bold; }
-        #hw2 .form-row { display: flex; align-items: flex-start; margin-bottom: 15px; }
-        #hw2 .form-label { width: 120px; text-align: right; margin-right: 15px; padding-top: 6px; font-size: 15px; color: #555; }
-        #hw2 .required-star { color: #d90000; margin-right: 4px; }
-        #hw2 .form-input-group { flex: 1; max-width: 600px; }
-        #hw2 input[type="text"], #hw2 input[type="email"], #hw2 input[type="tel"], #hw2 textarea { width: 100%; background-color: #fce8e8; border: 1px solid #b3b3b3; padding: 10px; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
-        #hw2 textarea { resize: vertical; min-height: 90px; }
-        #hw2 select { background-color: #fff; border: 1px solid #7bc1db; padding: 8px; border-radius: 3px; font-size: 14px; margin-right: 5px; outline: none; }
-        #hw2 .radio-group, #hw2 .checkbox-group { padding-top: 6px; font-size: 14px; color: #555; display: flex; flex-wrap: wrap; align-items: center; }
-        #hw2 .radio-group label, #hw2 .checkbox-group label { margin-right: 15px; margin-bottom: 8px; cursor: pointer; display: inline-flex; align-items: center; }
-        #hw2 input.other-text-input { width: 180px; margin-left: 5px; padding: 4px 8px; }
-        #hw2 input.other-text-input:disabled { background-color: #f0f0f0; border-color: #ccc; cursor: not-allowed; }
-        #hw2 .submit-btn-wrapper { margin-top: 30px; padding-left: 135px; }
-        #hw2 .submit-btn { background-color: #8cb9e6; color: white; border: none; padding: 10px 30px; font-size: 15px; border-radius: 4px; cursor: pointer; transition: background 0.2s; font-weight: bold; }
-        #hw2 .submit-btn:hover { background-color: #72a3d4; }
+        .info-val {
+            color: #4b5563;
+        }
+
+        .profile-summary {
+            margin-top: 15px;
+            border-top: 1px solid #f3f4f6;
+            padding-top: 15px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .profile-summary h3 {
+            font-size: 15px;
+            margin: 0 0 5px 0;
+            color: #1f2937;
+        }
+
+        /* ====== 各階段作業專案卡片 ====== */
+        .section-title {
+            font-size: 18px;
+            color: #1f2937;
+            font-weight: bold;
+            margin: 30px 0 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-left: 4px solid #10b981;
+            padding-left: 8px;
+        }
+
+        .assignment-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .assignment-card {
+            background: #fafbfc;
+            border: 1px solid #e5e7eb;
+            border-left: 4px solid #3b82f6;
+            border-radius: 8px;
+            padding: 18px;
+            transition: transform 0.2s, box-shadow: 0.2s;
+        }
+
+        .assignment-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin: 0 0 10px 0;
+        }
+
+        .card-body-text {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #4b5563;
+            margin: 0 0 12px 0;
+        }
+
+        .tag-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tag {
+            background: #e0f2fe;
+            color: #0369a1;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .card-link {
+            display: inline-block;
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: right;
+            width: 100%;
+        }
+
+        .card-link:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
-<div class="assignment-header">
-    <button class="nav-btn active" onclick="switchHW(this, 'hwReport')">📊 期末成果總覽報告</button>
-    <button class="nav-btn" onclick="switchHW(this, 'hw1')">作業一：個人網頁</button>
-    <button class="nav-btn" onclick="switchHW(this, 'hw2')">作業二：表單設計</button>
-    <button class="nav-btn" onclick="switchHW(this, 'hw3')">作業三：Hello JS</button>
-    <button class="nav-btn" onclick="switchHW(this, 'hw4')">作業四：JS 基礎練習</button>
-    <button class="nav-btn" onclick="switchHW(this, 'hw5')">作業五：OpenCode專案</button>
-    <button class="nav-btn" onclick="switchHW(this, 'hw6')">作業六：JS 參數練習</button>
-    <button class="nav-btn" onclick="switchHW(this, 'hw7')">作業七：網誌邏輯練習</button>
-    <button class="nav-btn" onclick="switchHW(this, 'hwMid')">期中作業：合成遊戲</button>
-</div>
+<div class="container">
 
-<div id="hwReport" class="tab-panel active" style="padding-bottom: 60px;">
-    <div class="report-container">
-        <div class="report-title-block">
-            <h1>網頁前端與全端程式設計：全學期成果總覽</h1>
-            <p>國立金門大學 資訊工程學系 · 許毓庭（學號：111410524）</p>
-        </div>
-        
-        <p style="line-height: 1.8; font-size: 1.05rem; text-indent: 2em; color: #2d3748;">
-            本專案建構了一個結構完善的「單頁式整合網頁應用程式 (SPA)」，系統化管理、動態展示並深入剖析全學期的開發成果。下方為各階段實作精華，**點擊任意區塊卡片即可直接秒速跳轉**到該作業的互動操作與源碼展示面板。
+    <header class="header-section">
+        <h1>網頁前端與全端程式設計：全學期成果總覽</h1>
+        <p>國立金門大學 資訊工程學系 ‧ 許毓庭 ( 學號：111410524 )</p>
+        <p class="intro-text">
+            本專案建構了一個結構完善的「單頁式整合網頁應用程式 (SPA)」，系統化管理、動態展示並深入剖析全學期的開發成果。下方為各階段實作精華，點擊區塊卡片即可直接秒速跳轉到該作業的互動操作與源碼展示面板。
         </p>
+    </header>
 
-        <h2 style="color:#2c3e50; border-left: 5px solid #2ecc71; padding-left: 10px; margin-top: 40px;">📂 各階段專案實作技術詳述 (點擊卡片可直接跳轉)</h2>
+    <nav class="custom-navbar">
+        <button class="menu-toggle-btn" onclick="toggleMenu()">☰ 開關作業選單</button>
+        <div class="nav-links-wrapper" id="navLinks">
+            <a href="#" class="nav-btn active-tab">📊 期末成果總覽報告</a>
+            <a href="#hw01" class="nav-btn">作業一：個人網頁</a>
+            <a href="#hw02" class="nav-btn">作業二：表單設計</a>
+            <a href="#hw03" class="nav-btn">作業三：Hello JS</a>
+            <a href="#hw04" class="nav-btn">作業四：JS 基礎練習</a>
+            <a href="#hw05" class="nav-btn">作業五：OpenCode專案</a>
+            <a href="#hw06" class="nav-btn">作業六：JS 參數練習</a>
+            <a href="#hw07" class="nav-btn">作業七：網誌邏輯練習</a>
+            <a href="../midterm/index.html" class="nav-btn">期中作業：合成遊戲</a> </div>
+    </nav>
 
-        <div class="section-card" onclick="clickToNavigate('hw1')">
-            <h3>📌 作業一：個人網頁 (aboutme.html)</h3>
-            <p><strong>【核心語彙與範疇】</strong> 網頁前端開發的起手式，精準掌控 HTML5 的語意化標籤架構與 CSS3 的卡片式佈局美學。</p>
-            <p><strong>【實作細節與成果】</strong> 利用 CSS 陰影、邊框圓角以及響應式彈性排版（Flexbox），打造具備現代化 UI 質感的個人資訊卡片。內容詳細揭示了就讀於國立金門大學資工系的背景、家鄉（嘉義）以及未來全端領域深耕的職涯願景。</p>
-            <div class="tech-tag-group">
-                <span class="tech-tag">HTML5 Semantic Elements</span><span class="tech-tag">CSS3 Card Layout</span><span class="tech-tag">Flexbox</span>
-            </div>
-            <div class="jump-hint">🔗 點擊此卡片跳轉至【作業一】展示 ➔</div>
-        </div>
-
-        <div class="section-card" onclick="clickToNavigate('hw2')">
-            <h3>📌 作業二：表單設計 (互動式會員問卷調查表)</h3>
-            <p><strong>【核心語彙與範疇】</strong> 深入研習 HTML 核心表單元件之配置與瀏覽器內建的前端資料有效性驗證機制。</p>
-            <p><strong>【實作細節與成果】</strong> 實作全功能問卷，導入 CSS 動態擬真緞帶視覺。結合原生 JavaScript 控制 DOM 元素屬性，達成<strong>「西元年月日動態二維連動選單（自動過濾大小月與閏年日數）」</strong>以及<strong>「勾選『其他』時動態啟用文字補充欄位」</strong>的高 UX 互動邏輯。</p>
-            <div class="tech-tag-group">
-                <span class="tech-tag">Form Validation</span><span class="tech-tag">Dynamic DOM Control</span><span class="tech-tag">UX Ribbon Design</span>
-            </div>
-            <div class="jump-hint">🔗 點擊此卡片跳轉至【作業二】展示 ➔</div>
-        </div>
-
-        <div class="section-card" onclick="clickToNavigate('hw3')">
-            <h3>📌 作業三：Hello JS (腳本語法初探)</h3>
-            <p><strong>【核心語彙與範疇】</strong> 初探瀏覽器腳本生命週期、客戶端執行環境、與 Chrome 開發者工具 Console 主控台監聽。</p>
-            <p><strong>【實作細節與成果】</strong> 正式將網頁由靜態轉為動態的試金石。藉由在 HTML 中引入外部 <code>hello.js</code>，學習主控台除錯技巧與事件驅動的基礎日誌輸出，為後續大規模演算法的除錯提供了必備底層概念。</p>
-            <div class="tech-tag-group">
-                <span class="tech-tag">Client-side Runtime</span><span class="tech-tag">DevTools Debugging</span><span class="tech-tag">Console Monitor</span>
-            </div>
-            <div class="jump-hint">🔗 點擊此卡片跳轉至【作業三】展示 ➔</div>
-        </div>
-
-        <div class="section-card" onclick="clickToNavigate('hw4')">
-            <h3>📌 作業四：JavaScript 核心基礎練習 (共10題)</h3>
-            <p><strong>【核心語彙與範疇】</strong> 訓練扎實的資料結構控制與演算法思維，將邏輯判斷、迴圈迭代、以及 JSON 資料序列化完全融會貫通。</p>
-            <p><strong>【實作細節與成果】</strong> 包含：BMI 數據計算器；運用巢狀迴圈在控制台精確排列的規律數字金字塔；設計 <code>while</code> 迴圈進行邊界控制的倒數計時發射器。此外，亦深入操作了**陣列遍歷篩選、班級成績統計、JSON 解構、購物車累加、以及通訊錄管理系統**。</p>
-            <div class="tech-tag-group">
-                <span class="tech-tag">Nested Loops</span><span class="tech-tag">JSON Parsing</span><span class="tech-tag">Array Aggregation</span><span class="tech-tag">Control Flows</span>
-            </div>
-            <div class="jump-hint">🔗 點擊此卡片跳轉至【作業四】展示 ➔</div>
-        </div>
-
-        <div class="section-card" onclick="clickToNavigate('hw5')">
-            <h3>📌 作業五：OpenCode 部落格網站專案開發</h3>
-            <p><strong>【核心語彙與範疇】</strong> 跨越純前端範疇，邁向 Node.js 核心與 Express 後端框架的視圖模組化與全端系統架構整合。</p>
-            <p><strong>【實作細節與成果】</strong> 慢研伺服器路由分發（Routing）、中間件防禦、以及前端視圖模板（EJS）的拆分。本彙整平台完整收錄並可即時載入儲存庫內關於 Express 開發架構、Session 會員機制驗證及 AI 協作優化的全套 Markdown 工程開發紀錄筆記。</p>
-            <div class="tech-tag-group">
-                <span class="tech-tag">Node.js Ecosystem</span><span class="tech-tag">Express Framework</span><span class="tech-tag">Modular Views</span>
-            </div>
-            <div class="jump-hint">🔗 點擊此卡片跳轉至【作業五】展示 ➔</div>
-        </div>
-
-        <div class="section-card" onclick="clickToNavigate('hw6')">
-            <h3>📌 作業六：JavaScript 進階函式與參數演練 (共10題)</h3>
-            <p><strong>【核心語彙與範疇】</strong> 攻克資工系核心之高階函數（HOF）、變數生命週期作用域與深層記憶體定址陷阱。</p>
-            <p><strong>【實作細節與成果】</strong> 鑽研 JavaScript 語法精髓：實作傳入匿名函式作為參數的**回呼函式工具**；運用**立即執行函式（IIFE）**保護核心變數；使用精簡的**箭頭函式搭配 <code>.map()</code> 處理**；探討**函數回傳函數（Closure 閉包機制）**以產生客製化倍率乘積器等核心底層邏輯。</p>
-            <div class="tech-tag-group">
-                <span class="tech-tag">Closures</span><span class="tech-tag">IIFE Scope</span><span class="tech-tag">Callbacks & HOF</span><span class="tech-tag">Pass by Reference</span>
-            </div>
-            <div class="jump-hint">🔗 點擊此卡片跳轉至【作業六】展示 ➔</div>
-        </div>
-
-        <div class="section-card" onclick="clickToNavigate('hw7')">
-            <h3>📌 作業七：JavaScript 網誌全端資料流演練 (共10題)</h3>
-            <p><strong>【核心語彙與範疇】</strong> 模擬真實後端 API 與資料庫撈取結果與前端視圖的系統對接訓練。</p>
-            <p><strong>【實作細節與成果】</strong> 為架構大型網誌系統的邏輯骨幹。內容實作了：物件屬性的動態存取；利用 ES6 **物件解構賦值**擷取前端 <code>req.body</code> 資料；使用**樣板字串**動態拼接 HTML 貼文列表。更進一步研習了資料庫的非同步撈取，以及 Node.js 最著名的 **Error-First 回呼錯誤優先攔截架構**。</p>
-            <div class="tech-tag-group">
-                <span class="tech-tag">Destructuring</span><span class="tech-tag">Template Literals</span><span class="tech-tag">Error-First Architecture</span><span class="tech-tag">Mock DB Queries</span>
-            </div>
-            <div class="jump-hint">🔗 點擊此卡片跳轉至【作業七】展示 ➔</div>
-        </div>
-
-        <div class="section-card" onclick="clickToNavigate('hwMid')">
-            <h3>📌 期中大型作業：動態水果合成網頁遊戲</h3>
-            <p><strong>【核心語彙與範疇】</strong> 結合高階物件導向設計（OOP）、事件驅動程式、Canvas 動態渲染與 2D 物理碰撞引擎。</p>
-            <p><strong>【實作細節與成果】</strong> 利用 2D 物理引擎（包含重力加速度感應、剛體碰撞邊界計算、向量摩擦力阻尼），設計一款可在瀏覽器流暢執行的水果合成遊戲。玩家釋放水果，當相同水果在 Canvas 畫布中碰撞時，會即時觸發狀態機並在原座標點「熔合進化」升級。本專案已利用 <strong>GitHub Pages</strong> 雲端全自動化部署上線。</p>
-            <div class="tech-tag-group">
-                <span class="tech-tag">2D Physics Engine</span><span class="tech-tag">Canvas Rendering</span><span class="tech-tag">Object-Oriented (OOP)</span><span class="tech-tag">GitHub Pages CD</span>
-            </div>
-            <div class="jump-hint">🔗 點擊此卡片跳轉至【期中作業】展示 ➔</div>
-        </div>
-
-        <h2 style="color:#2c3e50; border-left: 5px solid #2ecc71; padding-left: 10px; margin-top: 40px;">🚀 彙整平台技術架構與亮點功能</h2>
-        <table class="highlight-table">
-            <thead>
-                <tr>
-                    <th>優化亮點</th>
-                    <th>資工工程級技術實現細節說明</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td><strong>單頁面應用程式 (SPA)</strong></td>
-                    <td>利用精準的 CSS 顯示屬性切換，在切換各個作業時**完全不需要重新整理網頁**，帶來如 App 般絲滑流暢的操作手感。</td>
-                </tr>
-                <tr>
-                    <td><strong>異步非同步遠端代碼同步 (AJAX)</strong></td>
-                    <td>平台核心引入原生 **Fetch API**。當使用者切換作業時，系統會動態發送 HTTP 請求至 GitHub 遠端儲存庫抓取最新原始碼，完全不佔用本機靜態空間，資料永久保持最新同步。</td>
-                </tr>
-                <tr>
-                    <td><strong>核心題目與預期結果對照</strong></td>
-                    <td>內建高彈性的關聯式物件資料庫。點擊特定小題時，網頁會自動更新並呈現**該題目的目標核心、測試代碼與預期的控制台輸出成果**，一目了然。</td>
-                </tr>
-            </tbody>
-        </table>
+    <section class="profile-card">
+        <div class="avatar">毓</div>
+        <h2 class="profile-name">許毓庭</h2>
+        <p class="profile-dept">國立金門大學 ‧ 資工系</p>
         
-        <div style="text-align: center; margin-top: 50px; color: #a0aec0; font-size: 0.9rem; border-top: 1px solid #e2e8f0; padding-top: 20px;">
-            © 2026 許毓庭 - 網頁程式設計期末成果彙整平台 · All Rights Reserved
+        <div class="profile-info-list">
+            <div class="info-row"><span class="info-label">年齡：</span><span class="info-val">18 歲</span></div>
+            <div class="info-row"><span class="info-label">家鄉：</span><span class="info-val">嘉義</span></div>
+            <div class="info-row"><span class="info-label">學校：</span><span class="info-val">金門大學</span></div>
+            <div class="info-row"><span class="info-label">科系：</span><span class="info-val">資訊工程學系</span></div>
         </div>
-    </div>
-</div>
 
-<div id="hw1" class="tab-panel flex-center">
-    <div class="container">
-        <div class="profile-img">毓</div>
-        <h1>許毓庭</h1>
-        <p style="color: #7f8c8d; margin-top: 0;">國立金門大學 · 資工系</p>
-        <div class="info-grid">
-            <div class="info-item"><span class="label">年齡：</span><span class="content">18 歲</span></div>
-            <div class="info-item"><span class="label">家鄉：</span><span class="content">嘉義</span></div>
-            <div class="info-item"><span class="label">學校：</span><span class="content">金門大學</span></div>
-            <div class="info-item"><span class="label">科系：</span><span class="content">資訊工程學系</span></div>
+        <div class="profile-summary">
+            <h3>作業說明與未來目標</h3>
+            <p style="margin:0; color:#6b7280; font-size:13px;">持續精進前端網頁架構、響應式排版，打造優質的使用者經驗介面！</p>
         </div>
-        <h3 style="text-align: left; color: #2c3e50;">作業說明與未來目標</h3>
-        <div class="goal"><strong>【作業核心】</strong> 學習 HTML 語法的基礎標籤排版、資訊區塊佈局與 CSS 的全域卡片化設計。<br><strong>【未來目標】</strong> 希望能在資工領域深耕發展，不斷提升自己的前端與後端開發技術，迎向未來的創新挑戰。</div>
-        <div class="link-group" style="justify-content: center; margin-top: 20px;">
-            <a href="https://github.com/vicky111410524/_wp/blob/master/aboutme.html" target="_blank" class="repo-link-btn">📂 檢視 GitHub 原始檔 (aboutme.html)</a>
-        </div>
-        <footer>© 2026 許毓庭 Personal Page</footer>
-    </div>
-</div>
+    </section>
 
-<div id="hw2" class="tab-panel">
-    <div class="container">
-        <div class="ribbon-wrapper"><div class="ribbon">會員問卷調查表</div></div>
-        <div class="required-note"><span class="required-star">*</span> 為必填(選)欄位，不能為空白</div>
+    <h2 class="section-title">📂 各階段專案實作技術詳述 (點擊卡片可直接跳轉)</h2>
+    
+    <div class="assignment-grid">
 
-        <form action="#" method="POST">
-            <div class="form-box">
-                <div class="form-tab">請填寫您的基本資料與偏好</div>
-                <div class="form-row"><div class="form-label"><span class="required-star">*</span> 姓名</div><div class="form-input-group"><input type="text" name="name" required></div></div>
-                <div class="form-row"><div class="form-label"><span class="required-star">*</span> 電子郵件</div><div class="form-input-group"><input type="email" name="email" required></div></div>
-                <div class="form-row"><div class="form-label"><span class="required-star">*</span> 電話</div><div class="form-input-group"><input type="tel" name="phone" required></div></div>
-                <div class="form-row"><div class="form-label"><span class="required-star">*</span> 性別</div><div class="form-input-group radio-group"><label><input type="radio" name="gender" value="male" required> 男</label><label><input type="radio" name="gender" value="female"> 女</label><label><input type="radio" name="gender" value="other"> 其他</label></div></div>
-                <div class="form-row"><div class="form-label"><span class="required-star">*</span> 出生日期</div><div class="form-input-group"><select id="year" name="year" required><option value="">請選擇 年</option></select><select id="month" name="month" required><option value="">請選擇 月</option></select><select id="day" name="day" required><option value="">請選擇 日</option></select></div></div>
-                <div class="form-row"><div class="form-label">職業</div><div class="form-input-group"><select name="job"><option value="">請選擇...</option><option value="student">學生</option><option value="tech">資訊科技</option><option value="finance">金融財務</option><option value="service">餐飲服務</option><option value="education">教育</option><option value="other">其他</option></select></div></div>
-                <div class="form-row"><div class="form-label">星座</div><div class="form-input-group"><select name="zodiac"><option value="">請選擇...</option><option value="aries">牡羊座</option><option value="taurus">金牛座</option><option value="gemini">雙子座</option><option value="cancer">巨蟹座</option><option value="leo">獅子座</option><option value="virgo">處女座</option><option value="libra">天秤座</option><option value="scorpio">天蠍座</option><option value="sagittarius">射手座</option><option value="capricorn">摩羯座</option><option value="aquarius">水瓶座</option><option value="pisces">雙魚座</option></select></div></div>
-                <div class="form-row"><div class="form-label">興趣愛好</div><div class="form-input-group checkbox-group"><label><input type="checkbox" name="hobby" value="reading"> 閱讀</label><label><input type="checkbox" name="hobby" value="sports"> 運動</label><label><input type="checkbox" name="hobby" value="travel"> 旅遊</label><label><input type="checkbox" name="hobby" value="music"> 音樂</label><label><input type="checkbox" name="hobby" value="movies"> 電影</label><label><input type="checkbox" name="hobby" value="other" id="hobby-other"> 其他 <input type="text" name="hobby_other_text" id="hobby-other-text" class="other-text-input" placeholder="請說明..." disabled></label></div></div>
-                <div class="form-row"><div class="form-label">喜歡的顏色</div><div class="form-input-group"><input type="text" name="favorite_color" placeholder="例如：藍綠色..."></div></div>
-                <div class="form-row"><div class="form-label">個性描述</div><div class="form-input-group"><input type="text" name="personality" placeholder="用幾個形容詞描述"></div></div>
-                <div class="form-row"><div class="form-label">留言與建議</div><div class="form-input-group"><textarea name="message" placeholder="有什麼想對我們說的嗎？"></textarea></div></div>
-                <div class="submit-btn-wrapper"><button type="submit" class="submit-btn">確認提交</button></div>
+        <div class="assignment-card" id="hw01">
+            <h3 class="card-title">📌 作業一：個人網頁 (aboutme.html)</h3>
+            <p class="card-body-text">
+                <strong>【核心語彙與範疇】</strong>網頁前端開發的起手式，精準掌控 HTML5 的語意化標籤結構與 CSS3 的卡片式佈局美學。<br>
+                <strong>【實作細節與成果】</strong>利用 CSS 陰影、邊框圓角以及響應式彈性排版（Flexbox），打造兼具現代化 UI 質感的個人資訊卡片。內容詳細揭示了就讀於國立金門大學資工系的背景、家鄉（嘉義）以及未來全端領域深耕的職涯願景。
+            </p>
+            <div class="tag-container">
+                <span class="tag">HTML5 Semantic Elements</span>
+                <span class="tag">CSS3 Card Layout</span>
+                <span class="tag">Flexbox</span>
             </div>
-        </form>
-        <div class="link-group" style="justify-content: center; margin-top: 20px;">
-            <a href="https://github.com/vicky111410524/_wp/tree/master/homework/02" target="_blank" class="repo-link-btn">📂 瀏覽儲存庫資料夾 (homework/02)</a>
+            <a href="../homework/01/aboutme.html" class="card-link">🔗 點擊此卡片跳轉至【作業一】展示 →</a>
         </div>
-    </div>
-</div>
 
-<div id="hw3" class="tab-panel flex-center">
-    <div class="hw-card-container">
-        <h2>作業三：JavaScript 基礎入門</h2>
-        <p class="hw-desc">初探主控台輸出機制的基本演練。</p>
-        <div class="file-info"><span class="file-label">即時連線檔案：</span><code>homework/03/hello.js</code></div>
-        <pre class="code-window"><code id="hw3-code">⏳ 正在同步下載遠端代碼...</code></pre>
-        <div class="link-group">
-            <a href="https://github.com/vicky111410524/_wp/blob/master/homework/03/hello.js" target="_blank" class="repo-link-btn">📂 檢視 GitHub 原始檔</a>
+        <div class="assignment-card" id="hw02">
+            <h3 class="card-title">📌 作業二：表單設計</h3>
+            <p class="card-body-text">
+                <strong>【核心語彙與範疇】</strong>前端資料收集的基石，涵蓋豐富的表單輸入型態與排版美化。<br>
+                <strong>【實作細節與成果】</strong>規劃良好的表單防呆與視覺引導，讓使用者在操作網頁互動時體驗流暢。
+            </p>
+            <div class="tag-container">
+                <span class="tag">Form Design</span>
+                <span class="tag">Input Validation</span>
+            </div>
+            <a href="../homework/02/index.html" class="card-link">🔗 點擊此卡片跳轉至【作業二】展示 →</a>
         </div>
-    </div>
-</div>
 
-<div id="hw4" class="tab-panel flex-center">
-    <div class="hw-card-container">
-        <h2>作業四：JavaScript 基礎練習 (共10題)</h2>
-        <p class="hw-desc">包含變數、流程控制、迴圈與基礎資料結構運算的 10 題核心練習。</p>
-        <div class="viewer-layout">
-            <div class="sub-btn-grid">
-                <button class="sub-btn readme-btn active" onclick="fetchGitHubCode('hw4', 'README.md')">README</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '01.js')">01.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '02.js')">02.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '03.js')">03.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '04.js')">04.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '05.js')">05.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '06.js')">06.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '07.js')">07.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '08.js')">08.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '09.js')">09.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw4', '10.js')">10.js</button>
+        <div class="assignment-card" id="hw03">
+            <h3 class="card-title">📌 作業三：Hello JS</h3>
+            <p class="card-body-text">
+                <strong>【核心語彙與範疇】</strong>跨入網頁動態邏輯控制的第一步。<br>
+                <strong>【實作細節與成果】</strong>撰寫 JavaScript 基礎語法，控制網頁元件的基礎互動與控制台輸出偵錯。
+            </p>
+            <div class="tag-container">
+                <span class="tag">JavaScript Basic</span>
+                <span class="tag">Console Log</span>
             </div>
-            
-            <div id="hw4-question" class="question-box"></div>
-            
-            <div class="file-info"><span class="file-label">現正瀏覽：</span><span id="hw4-filename">README.md</span></div>
-            <pre class="code-window"><code id="hw4-code">⏳ 正在同步下載遠端代碼...</code></pre>
-            <div class="link-group">
-                <a href="https://github.com/vicky111410524/_wp/tree/master/homework/04" target="_blank" class="repo-link-btn">📂 檢視 GitHub 完整目錄</a>
-            </div>
+            <a href="../homework/03/index.html" class="card-link">🔗 點擊此卡片跳轉至【作業三】展示 →</a>
         </div>
-    </div>
-</div>
 
-<div id="hw5" class="tab-panel flex-center">
-    <div class="hw-card-container">
-        <h2>作業五：OpenCode 網站專案開發</h2>
-        <p class="hw-desc">模組化前端網頁版面配置與整合設計專案。</p>
-        <div class="viewer-layout">
-            <div class="sub-btn-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
-                <button class="sub-btn readme-btn active" onclick="fetchGitHubCode('hw5', '_doc/opencode_memory.md')">專案記憶開發筆記</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw5', '_doc/blog-summary.md')">部落格開發摘要</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw5', '_doc/blog_code_detail.md')">程式碼詳細解說</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw5', '_doc/blog-session-transcript.md')">Session 互動紀錄</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw5', '_doc/blog-ai-vicky-chat.md')">AI 對話紀錄</button>
+        <div class="assignment-card" id="hw04">
+            <h3 class="card-title">📌 作業四：JS 基礎練習</h3>
+            <p class="card-body-text">
+                <strong>【核心語彙與範疇】</strong>演算法與邏輯思維在前端的落實。<br>
+                <strong>【實作細節與成果】</strong>練習條件判斷式、迴圈架構以及物件導向與陣列資料的操作。
+            </p>
+            <div class="tag-container">
+                <span class="tag">Loops & Conditionals</span>
+                <span class="tag">Array Methods</span>
             </div>
-            <div class="file-info"><span class="file-label">現正瀏覽：</span><span id="hw5-filename">_doc/opencode_memory.md</span></div>
-            <pre class="code-window"><code id="hw5-code">⏳ 正在同步下載遠端代碼...</code></pre>
-            <div class="link-group" style="justify-content: space-between;">
-                <a href="https://github.com/vicky111410524/_wp/tree/master/homework/05" target="_blank" class="repo-link-btn">📂 檢視 GitHub 完整目錄</a>
-            </div>
+            <a href="../homework/04/index.html" class="card-link">🔗 點擊此卡片跳轉至【作業四】展示 →</a>
         </div>
-    </div>
-</div>
 
-<div id="hw6" class="tab-panel flex-center">
-    <div class="hw-card-container">
-        <h2>作業六：JavaScript 函數與參數練習 (共10題)</h2>
-        <p class="hw-desc">全面演練函式調用、參數傳遞、閉包與回傳值邏輯處理的 10 道專題題庫。</p>
-        <div class="viewer-layout">
-            <div class="sub-btn-grid">
-                <button class="sub-btn readme-btn active" onclick="fetchGitHubCode('hw6', 'README.md')">README</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '01.js')">01.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '02.js')">02.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '03.js')">03.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '04.js')">04.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '05.js')">05.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '06.js')">06.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '07.js')">07.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '08.js')">08.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '09.js')">09.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw6', '10.js')">10.js</button>
+        <div class="assignment-card" id="hw05">
+            <h3 class="card-title">📌 作業五：OpenCode專案</h3>
+            <p class="card-body-text">
+                <strong>【核心語彙與範疇】</strong>前端與伺服器端（Node.js / Deno）的串聯實戰。<br>
+                <strong>【實作細節與成果】</strong>成功將主程式改名優化為 `main.js`，佈署於遠端提供穩定的資料邏輯處理，完成了部落格核心系統的對接。
+            </p>
+            <div class="tag-container">
+                <span class="tag">Node.js Server</span>
+                <span class="tag">main.js Backend</span>
             </div>
-            
-            <div id="hw6-question" class="question-box"></div>
-            
-            <div class="file-info"><span class="file-label">現正瀏覽：</span><span id="hw6-filename">README.md</span></div>
-            <pre class="code-window"><code id="hw6-code">⏳ 正在同步下載遠端代碼...</code></pre>
-            <div class="link-group">
-                <a href="https://github.com/vicky111410524/_wp/tree/master/homework/06" target="_blank" class="repo-link-btn">📂 檢視 GitHub 完整目錄</a>
-            </div>
+            <a href="../homework/05/blog/index.html" class="card-link">🔗 點擊此卡片跳轉至【作業五】展示 →</a>
         </div>
-    </div>
-</div>
 
-<div id="hw7" class="tab-panel flex-center">
-    <div class="hw-card-container">
-        <h2>作業七：10 題 JavaScript 網誌演練</h2>
-        <p class="hw-desc">這是看懂與剖析系統化 Blog 網誌資料排版與動態邏輯架構的核心關鍵題組。</p>
-        <div class="viewer-layout">
-            <div class="sub-btn-grid">
-                <button class="sub-btn readme-btn active" onclick="fetchGitHubCode('hw7', 'README.md')">README</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '01.js')">01.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '02.js')">02.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '03.js')">03.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '04.js')">04.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '05.js')">05.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '06.js')">06.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '07.js')">07.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '08.js')">08.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '09.js')">09.js</button>
-                <button class="sub-btn" onclick="fetchGitHubCode('hw7', '10.js')">10.js</button>
+        <div class="assignment-card" id="hw06">
+            <h3 class="card-title">📌 作業六：JS 參數練習</h3>
+            <p class="card-body-text">
+                <strong>【核心語彙與範疇】</strong>函數（Functions）與高階參數傳遞機制。<br>
+                <strong>【實作細節與成果】</strong>掌握事件處理器參數、網頁 URL 查詢字串的抓取與解析技術。
+            </p>
+            <div class="tag-container">
+                <span class="tag">JS Function Parameters</span>
+                <span class="tag">URL Params</span>
             </div>
-            
-            <div id="hw7-question" class="question-box"></div>
-            
-            <div class="file-info"><span class="file-label">現正瀏覽：</span><span id="hw7-filename">README.md</span></div>
-            <pre class="code-window"><code id="hw7-code">⏳ 正在同步下載遠端代碼...</code></pre>
-            <div class="link-group">
-                <a href="https://github.com/vicky111410524/_wp/tree/master/homework/07" target="_blank" class="repo-link-btn">📂 檢視 GitHub 完整目錄</a>
-            </div>
+            <a href="../homework/06/index.html" class="card-link">🔗 點擊此卡片跳轉至【作業六】展示 →</a>
         </div>
-    </div>
-</div>
 
-<div id="hwMid" class="tab-panel flex-center">
-    <div class="hw-card-container">
-        <h2>期中作業成果：水果合成網頁遊戲</h2>
-        <p class="hw-desc">基於物理碰撞與動態圖像堆疊邏輯研發的趣味休閒小遊戲。</p>
-        <div class="viewer-layout">
-            <div class="sub-btn-grid" style="grid-template-columns: 1fr;">
-                <button class="sub-btn readme-btn active" onclick="fetchGitHubCode('hwMid', 'README.md')">查看遊戲專案 README 開發說明文件</button>
+        <div class="assignment-card" id="hw07">
+            <h3 class="card-title">📌 作業七：網誌邏輯練習</h3>
+            <p class="card-body-text">
+                <strong>【核心語彙與範疇】</strong>動態前端網誌（Blog）系統的路由與狀態維護。<br>
+                <strong>【實作細節與成果】</strong>實作動態資料渲染、文章增刪與修改功能，優化整體資料流控制。
+            </p>
+            <div class="tag-container">
+                <span class="tag">Blog System Router</span>
+                <span class="tag">State Management</span>
             </div>
-            <div class="file-info"><span class="file-label">現正瀏覽：</span><span id="hwMid-filename">README.md</span></div>
-            <pre class="code-window"><code id="hwMid-code">⏳ 正在同步下載遠端代碼...</code></pre>
-            <div class="link-group" style="justify-content: space-between; margin-top: 15px; display: flex;">
-                <a href="https://github.com/vicky111410524/fruit-merge-game" target="_blank" class="repo-link-btn">📂 儲存庫專案代碼</a>
-                <a href="https://vicky111410524.github.io/fruit-merge-game/" target="_blank" class="repo-link-btn play-btn">🎮 點此直奔遊戲成果線上玩 (GitHub Pages)</a>
-            </div>
+            <a href="../homework/07/index.html" class="card-link">🔗 點擊此卡片跳轉至【作業七】展示 →</a>
         </div>
+
     </div>
+
 </div>
 
 <script>
-    // 頂部選單導覽核心
-    function switchHW(button, hwId) {
-        document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        
-        document.getElementById(hwId).classList.add('active');
-        button.classList.add('active');
-        window.scrollTo(0, 0); 
-    }
-
-    // 點擊報告卡片時，自動搜尋頂部對應按鈕並觸發切換
-    function clickToNavigate(hwId) {
-        const targetBtn = document.querySelector(`button[onclick*="'${hwId}'"]`);
-        if (targetBtn) {
-            switchHW(targetBtn, hwId);
-        }
-    }
-
-    const questionDatabase = {
-        hw4: {
-            'README.md': '📌 <strong>作業四說明</strong>：包含基礎變數控制、條件分支判斷、迴圈處理與基礎物件資料存取的 10 題核心基礎語法練習。请點擊上方按鈕切換觀看各小題原始碼與執行結果。',
-            '01.js': '🎯 <strong>1. BMI 計算器</strong><br><strong>測試碼：</strong> <code>calculateBMI(70, 1.75)</code><br><strong>預期輸出：</strong> 正常 / 過輕 / 肥胖',
-            '02.js': '🎯 <strong>2. 數字金字塔</strong><br>使用巢狀迴圈邏輯在控制台堆疊出三角形規律數字圖形。',
-            '03.js': '🎯 <strong>3. 倒數計時器</strong><br>設計 while 迴圈計數器，由 10 倒數至 1 並在結尾印出「發射！」。',
-            '04.js': '🎯 <strong>4. 攝氏轉華氏轉換器</strong><br>公式：F = C * 9/5 + 32，演練基本函數數值運算與回傳。',
-            '05.js': '🎯 <strong>5. 陣列過濾器</strong><br>遍歷常規陣列並利用條件句篩選出特定大於特定數值的子元素群。',
-            '06.js': '🎯 <strong>6. 個人名片物件</strong><br>宣告包含屬性與內建 Method 函式的 Object 物件，調用 <code>this</code> 輸出姓名。',
-            '07.js': '🎯 <strong>7. 班級成績統計</strong><br>利用陣列物件結合迴圈，進行大量分數之總和累加與平均數值計算。',
-            '08.js': '🎯 <strong>8. JSON 資料解析</strong><br>使用 <code>JSON.parse</code> 將字串轉回物件並搭配條件分支判斷物件狀態。',
-            '09.js': '🎯 <strong>9. 購物車總金額計算</strong><br>將物件陣列內各項商品的數量與單價進行交叉乘積並累加結帳總金額。',
-            '10.js': '🎯 <strong>10. 簡易通訊錄搜尋</strong><br>建立鍵值對搜尋機制，比對成功輸出資料，失敗輸出「查無此人」。'
-        },
-        hw5: {
-            '_doc/opencode_memory.md': '📌 <strong>OpenCode 專案記憶開發筆記</strong>：詳細記錄了關於 Express 開發日誌、核心架構與各模組整合的記憶筆記。',
-            '_doc/blog-summary.md': '📌 <strong>部落格開發摘要</strong>：全盤記錄了後端路由分發、頁面資料模板拼接與專案部屬的心得摘要。',
-            '_doc/blog_code_detail.md': '📌 <strong>程式碼詳細解說</strong>：深入剖析整個 Express 全端專案中控制器、路由與資料對接邏輯。',
-            '_doc/blog-session-transcript.md': '📌 <strong>Session 互動紀錄</strong>：記載關於專案在使用者狀態保持、Cookie 機制與後端防護開發的關鍵細節。',
-            '_doc/blog-ai-vicky-chat.md': '📌 <strong>AI 對話紀錄</strong>：完整收錄開發期間與 AI 進行程式碼微調、邏輯除錯的即時筆記。'
-        },
-        hw6: {
-            'README.md': '📌 <strong>作業六說明</strong>：進階演練 JavaScript 中的回呼函式 (Callback)、箭頭函式、立即執行函式 (IIFE) 與高階函式邏輯。',
-            '01.js': '🎯 <strong>1. Callback 基礎實作</strong><br>建立 mathTool 函數，傳入兩個數值與匿名回呼函式達成相加或相減。',
-            '02.js': '🎯 <strong>2. 匿名函數與立即執行 (IIFE)</strong><br>實作 IIFE 建立變數保護壁壘，使外部全域無法任意串改內部計數器。',
-            '03.js': '🎯 <strong>3. 箭頭函數與陣列轉換</strong><br>運用單行箭頭函式搭配 <code>.map()</code> 針對既有商品價格陣列進行全面 8 折的批次轉換。',
-            '04.js': '🎯 <strong>4. 陣列參數的「破壞性修改」</strong><br>實作函數探討傳址陷阱 (Pass by Reference)，觀察當在函式內部修改陣列時，原陣列是否被一併變更。',
-            '05.js': '🎯 <strong>5. 函數回傳函數 (HOF)</strong><br>撰寫一個閉包高階函式，傳入 factor 倍率常數後，動態產生一個可重複調用的加乘專用函式。',
-            '06.js': '🎯 <strong>6. Callback 篩選器</strong><br>不調用原生方法，純手寫遍歷迴圈打造 <code>myFilter(arr, callback)</code> 篩選器核心。',
-            '07.js': '🎯 <strong>7. 箭頭函數處理物件</strong><br>整合 <code>.filter()</code> 與箭頭函式，動態過濾大量使用者物件陣列中符合法定年齡的資料。',
-            '08.js': '🎯 <strong>8. 參數傳址陷阱：重新賦值 vs 修改</strong><br>深度探討當對變數指標「重新賦值」或是調用行為方法（如 <code>.push()</code>）時，記憶體定址變更的本質差異。',
-            '09.js': '🎯 <strong>9. 延遲執行的 Callback</strong><br>利用 <code>setTimeout</code> 異步排程工具，傳入箭頭函式實作 2 秒鐘後的延遲控制台字串拼裝輸出。',
-            '10.js': '🎯 <strong>10. 綜合應用：計算總價</strong><br>寫一個 calculateTotal 函式，整合累加總價與自訂的折扣處理 Callback 機制。'
-        },
-        hw7: {
-            'README.md': '📌 <strong>作業七說明</strong>：深度探討網路請求核心結構，包含物件解構賦值、樣板字串拼接、SQL 模擬與 Error-First 錯誤優先架構。',
-            '01.js': '🎯 <strong>1. 物件屬性存取</strong><br>熟練運用點符號 (Dot notation) 與中括號 (Bracket notation) 分別存取部落格貼文物件屬性。',
-            '02.js': '🎯 <strong>2. 物件解構賦值</strong><br>模擬 Express 解析前端請求：一寫取出 <code>req.body</code> 中的 title 與 content 宣告為對應常數。',
-            '03.js': '🎯 <strong>3. 陣列遍歷與字串拼接</strong><br>模擬部落格首頁生成：運用 <code>forEach</code> 遍歷貼文並以反引號樣板字串動態組裝 HTML 元素字串。',
-            '04.js': '🎯 <strong>4. 字典與動態參數</strong><br>模擬網址動態參數解析，在常規 params 物件中動態新增對應的 key-value ID 屬性。',
-            '05.js': '🎯 <strong>5. Callback 函數傳參</strong><br>模擬非同步資料庫獲取，設計 fetchData 成功時將 null 錯誤狀態與成果物件經由 Callback 向外傳遞。',
-            '06.js': '🎯 <strong>6. JSON 處理</strong><br>探討 <code>express.json()</code> 底層原理，利用 <code>JSON.parse()</code> 反序列化字串並進行陣列索引存取。',
-            '07.js': '🎯 <strong>7. 模擬資料庫查詢</strong><br>實作 fakeGet 模擬 SQL 數據撈取，不論語法皆透過回呼函式回傳假資料以利前端提早進行介面測試。',
-            '08.js': '🎯 <strong>8. 樣板字串中的邏輯運算</strong><br>在樣板字串中內嵌三元運算子 (Ternary Operator)，達成依據登入狀態動態顯示使用者名稱的防呆機制。',
-            '09.js': '🎯 <strong>9. 陣列物件的排序與切片</strong><br>模擬文章前台摘要顯示：利用字串切片 <code>substring</code> 擷取內文前 10 個字元並自動增添「...」後綴。',
-            '10.js': '🎯 <strong>10. 錯誤優先回呼模式</strong><br>研習 Node.js 經典的 Error-First Callback 設計，傳傳入非法權限時精準觸發第一參數錯誤回傳攔截。'
-        }
-    };
-
-    const repoPaths = {
-        hw3: 'https://raw.githubusercontent.com/vicky111410524/_wp/master/homework/03/hello.js',
-        hw4: 'https://raw.githubusercontent.com/vicky111410524/_wp/master/homework/04/',
-        hw5: 'https://raw.githubusercontent.com/vicky111410524/_wp/master/homework/05/',
-        hw6: 'https://raw.githubusercontent.com/vicky111410524/_wp/master/homework/06/',
-        hw7: 'https://raw.githubusercontent.com/vicky111410524/_wp/master/homework/07/',
-        hwMid: 'https://raw.githubusercontent.com/vicky111410524/fruit-merge-game/main/README.md'
-    };
-
-    function fetchGitHubCode(category, filename) {
-        const panel = document.getElementById(category);
-        panel.querySelectorAll('.sub-btn').forEach(btn => {
-            if(btn.textContent === filename || (filename.includes('_doc/') && btn.getAttribute('onclick').includes(filename))) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-        
-        const questionBox = document.getElementById(`${category}-question`);
-        if (questionBox) {
-            if (questionDatabase[category] && questionDatabase[category][filename]) {
-                questionBox.innerHTML = questionDatabase[category][filename];
-                questionBox.style.display = 'block'; 
-            } else {
-                questionBox.style.display = 'none';  
-            }
-        }
-        
-        document.getElementById(`${category}-filename`).textContent = filename;
-        const codeBox = document.getElementById(`${category}-code`);
-        codeBox.textContent = `⚡ 正在連線到 GitHub 伺服器，即時抓取 ${filename} 中...`;
-
-        let targetUrl = (category === 'hwMid') ? repoPaths.hwMid : (repoPaths[category] + filename);
-
-        fetch(targetUrl)
-            .then(response => {
-                if (!response.ok) {
-                    if (category === 'hwMid' && targetUrl.includes('/main/')) {
-                        targetUrl = targetUrl.replace('/main/', '/master/');
-                        return fetch(targetUrl);
-                    }
-                    throw new Error(`HTTP 錯誤!`);
-                }
-                return response.text();
-            })
-            .then(codeText => { codeBox.textContent = codeText; })
-            .catch(() => {
-                codeBox.textContent = `❌ 無法自動載入程式碼。\n原因：儲存庫目前設定可能為「私有(Private)」，或檔案已被移動。\n\n嘗試連線網址：\n${targetUrl}`;
-            });
-    }
-
-    window.onload = function() {
-        fetch('https://raw.githubusercontent.com/vicky111410524/_wp/master/homework/03/hello.js')
-            .then(res => res.text()).then(text => document.getElementById('hw3-code').textContent = text)
-            .catch(() => document.getElementById('hw3-code').textContent = "console.log('hello 你好')");
-
-        fetchGitHubCode('hw4', 'README.md');
-        fetchGitHubCode('hw5', '_doc/opencode_memory.md'); 
-        fetchGitHubCode('hw6', 'README.md');
-        fetchGitHubCode('hw7', 'README.md');
-        fetchGitHubCode('hwMid', 'README.md');
-    };
-
-    // ==================== 作業二：問卷表單日期與連動邏輯 ====================
-    const yearSelect = document.getElementById('year');
-    const monthSelect = document.getElementById('month');
-    const daySelect = document.getElementById('day');
-    const currentYear = new Date().getFullYear();
-
-    for (let i = currentYear; i >= currentYear - 100; i--) {
-        let op = document.createElement('option'); op.value = i; op.textContent = i; yearSelect.appendChild(op);
-    }
-    for (let i = 1; i <= 12; i++) {
-        let op = document.createElement('option'); op.value = i; op.textContent = i; monthSelect.appendChild(op);
-    }
-    function updateDays() {
-        const y = parseInt(yearSelect.value), m = parseInt(monthSelect.value);
-        daySelect.innerHTML = '<option value="">請選擇 日</option>';
-        if (y && m) {
-            const totalDays = new Date(y, m, 0).getDate();
-            for (let i = 1; i <= totalDays; i++) {
-                let op = document.createElement('option'); op.value = i; op.textContent = i; daySelect.appendChild(op);
-            }
-        }
-    }
-    yearSelect.addEventListener('change', updateDays);
-    monthSelect.addEventListener('change', updateDays);
-
-    document.getElementById('hobby-other').addEventListener('change', function() {
-        const txt = document.getElementById('hobby-other-text');
-        txt.disabled = !this.checked;
-        if (this.checked) txt.focus(); else txt.value = '';
-    });
+function toggleMenu() {
+    var navLinks = document.getElementById("navLinks");
+    // 切換 active 樣式類別（顯示/隱藏）
+    navLinks.classList.toggle("active");
+}
 </script>
+
 </body>
 </html>
