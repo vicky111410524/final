@@ -4,6 +4,8 @@
 
 > **專案總覽**：本專案為一個「單頁式整合網頁應用程式 (SPA)」，核心目的在於系統化管理、展示並解說 2026 學年度全學期的網頁前端與 JavaScript 全端開發成果。介面採用現代化 Flexbox 與 Grid 響應式佈局，並透過 **非同步 JavaScript (Fetch API)** 實時串接遠端 GitHub 儲存庫（Repository），達成免重新整理、即時預覽程式代碼與題目解析的高互動性設計。
 
+與AI的對話:https://gemini.google.com/share/3d2e1327a693
+期末彙整平台:https://vicky111410524.github.io/final/
 ---
 
 ## 🛠️ 各階段作業實作內容述要
